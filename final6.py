@@ -9,6 +9,7 @@ import time
 import playsound
 import pygame
 import sys
+import pyttsx3
 
 conversation_file = "conversations_1.json"
 
@@ -88,28 +89,16 @@ def respond(user_input):
     return translated_response
 
 def speak(text):
-    # Save the text-to-speech output to a file
-    tts = gTTS(text=text, lang='vi')
-    filename = 'voice.mp3'
-    tts.save(filename)
+    engine = pyttsx3.init()
 
-    # Suppress Pygame welcome message
-    original_stdout = sys.stdout  # Save a reference to the original standard output
-    sys.stdout = open(os.devnull, 'w')  # Redirect stdout to null
-    pygame.mixer.init()
-    sys.stdout.close()  # Close the redirected stdout
-    sys.stdout = original_stdout  # Reset stdout back to original
 
-    pygame.mixer.music.load(filename)
-    pygame.mixer.music.play()
 
-    # Wait until the audio finishes playing
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
+    voices = engine.getProperty('voices')
 
-    # Clean up resources
-    pygame.mixer.music.unload()
-    os.remove(filename)
+
+    engine.setProperty('voice', voices[1].id)
+    engine.say(text)
+    engine.runAndWait()
 
 # Bắt đầu vòng lặp trò chuyện
 while True:
