@@ -64,14 +64,15 @@ def respond(user_input):
 
     try:
         # Gửi câu hỏi đã dịch đến mô hình
-        response_obj = ollama.chat(model="gemma2:2b", messages=[{"role": "user", "content": translated_input},
-                                                                {"role": "system", "content": "Answer briefly, up to 2 questions."}])
-        
+        response_obj = ollama.chat(model="llama3", messages=[{"role": "user", "content": translated_input},
+                                                                {"role": "system", "content": "Answer briefly."}])
+        print(response_obj)
+
         # Kiểm tra định dạng của phản hồi
         if isinstance(response_obj, dict) and 'message' in response_obj:
             # Lấy nội dung phản hồi và loại bỏ các ký tự không phải chữ cái
             response_text = response_obj['message']['content']
-            response_text = re.sub(r'[^A-Za-z\s]', '', response_text)
+            response_text = re.sub(r'[^\w\s]', '', response_text, flags=re.UNICODE)
         else:
             return "Xin lỗi, tôi không thể xử lý yêu cầu của bạn."
 
@@ -116,13 +117,10 @@ while True:
 
         print(text)
 
-    # model
-
-    # text to speech
-
 
     user_input = text.lower()
     response = respond(user_input)
     speak(response)
     print(f"🐱: {response}")
+
 
